@@ -270,7 +270,7 @@ def update_notification():
     print("Subscription Updated")
     print(update_payload)
     print("- - - - - - - - - - - - - - - - -")
-        print(update_request.text)
+    print(update_request.text)
     return Response(status=202)
 
 
