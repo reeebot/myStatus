@@ -65,9 +65,9 @@ def switchOff() :
 def index():
     if not session.get("user"):
         return redirect(url_for("login"))
-    global token
-    token = _get_token_from_cache(app_config.SCOPE)
-    if not token:
+    global globalToken
+    globalToken = _get_token_from_cache(app_config.SCOPE)
+    if not globalToken:
         return redirect(url_for("login"))
     return render_template('index.html', user=session["user"])
 
@@ -137,12 +137,12 @@ def _get_token_from_cache(scope=None):
 
 @app.route("/view_subs")
 def get_subscriptions():
-    token = _get_token_from_cache(app_config.SCOPE)
-    if not token:
+    globalToken = _get_token_from_cache(app_config.SCOPE)
+    if not globalToken:
         return redirect(url_for("login"))
     graph_data = requests.get(
         app_config.SUBSCRIPTIONS_ENDPOINT,
-        headers={'Authorization': 'Bearer ' + token['access_token']}
+        headers={'Authorization': 'Bearer ' + globalToken['access_token']}
         ).json()
     if not graph_data.get('value'):
         print("")
@@ -156,9 +156,9 @@ def get_subscriptions():
 
 @app.route("/on")
 def create_subscription():
-    global token
-    token = _get_token_from_cache(app_config.SCOPE)
-    if not token:
+    global globalToken
+    globalToken = _get_token_from_cache(app_config.SCOPE)
+    if not globalToken:
         return redirect(url_for("login"))
     expireTime = (datetime.utcnow() + timedelta(hours=2)).isoformat() + "2Z"
     payload = {
@@ -170,12 +170,12 @@ def create_subscription():
     graph_data = requests.post(
         app_config.SUBSCRIPTIONS_ENDPOINT,
         headers={
-            'Authorization': 'Bearer ' + token['access_token'],
+            'Authorization': 'Bearer ' + globalToken['access_token'],
             'Content-Type': 'application/json'},
         json=payload,
         ).json()
-    global sub_ID
-    sub_ID = graph_data.get('id')
+    global globalSub_ID
+    globalSub_ID = graph_data.get('id')
     if not graph_data.get('error'):
         print("")
         print("> > >")
@@ -190,12 +190,12 @@ def create_subscription():
 
 @app.route("/off")
 def remove_subscription():
-    token = _get_token_from_cache(app_config.SCOPE)
-    if not token:
+    globalToken = _get_token_from_cache(app_config.SCOPE)
+    if not globalToken:
         return redirect(url_for("login"))
     graph_data = requests.get(
         app_config.SUBSCRIPTIONS_ENDPOINT,
-        headers={'Authorization': 'Bearer ' + token['access_token']}
+        headers={'Authorization': 'Bearer ' + globalToken['access_token']}
         ).json()
     if not graph_data.get('value'):
         print("")
@@ -205,7 +205,7 @@ def remove_subscription():
         removeID = app_config.SUBSCRIPTIONS_ENDPOINT + graph_data['value'][0]['id']
         remove_request = requests.delete(
             removeID,
-            headers={'Authorization': 'Bearer ' + token['access_token']}
+            headers={'Authorization': 'Bearer ' + globalToken['access_token']}
             )
         print("")
         print("> > >")
@@ -252,26 +252,24 @@ def notification_received():
 
 @app.route("/update")
 def update_notification():
-    token = _get_token_from_cache(app_config.SCOPE)
+    globalToken = _get_token_from_cache(app_config.SCOPE)
     newExpireTime = (datetime.utcnow() + timedelta(hours=2)).isoformat() + "2Z"
     update_payload = {
         "expirationDateTime": newExpireTime
         }
-    sub_ID_ENDPOINT = app_config.SUBSCRIPTIONS_ENDPOINT + sub_ID
+    sub_ID_ENDPOINT = app_config.SUBSCRIPTIONS_ENDPOINT + globalSub_ID
     update_request = requests.patch(
         sub_ID_ENDPOINT,
         headers={
-            'Authorization': 'Bearer ' + token['access_token'],
+            'Authorization': 'Bearer ' + globalToken['access_token'],
             'Content-Type': 'application/json'},
         json=update_payload,
-        )#.json()
-    if not update_request.get('error'):
-        print("")
-        print("> > >")
-        print("Subscription Updated")
-        print(update_payload)
-        print("- - - - - - - - - - - - - - - - -")
-    else:
+        )
+    print("")
+    print("> > >")
+    print("Subscription Updated")
+    print(update_payload)
+    print("- - - - - - - - - - - - - - - - -")
         print(update_request.text)
     return Response(status=202)
 
