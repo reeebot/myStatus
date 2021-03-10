@@ -1,0 +1,13 @@
+[Unit]
+Description=myStatus
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/myStatus
+ExecStart=python3 server.py
+Restart=always
+Environment=FLASK_CONFIG=production
+
+[Install]
+WantedBy=multi-user.target
