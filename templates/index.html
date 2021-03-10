@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>myStatus - v.PUSH</title>
+		<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico"/>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<!-- <meta http-equiv="refresh" content="1800" /> -->
+	</head>
+
+	<body>
+		<div class="container py-2" align="center">
+			<div class="row">
+				<div class="col">
+					<div style="height:2px;"></div>
+					<h2 class="font-weight-light" style=>myStatus - v.PUSH</h2>
+					<div style="height:16px;"><br></div>
+					<a href="/on" class="btn btn-success btn-lg"><b>ON</b></a>
+					<a href="/off" class="btn btn-danger btn-lg">OFF</a>
+					<hr>
+					<a href="/view_subs" class="btn btn-outline-info btn-sm"><b>subs</b></a>
+					<a href="/logout" class="btn btn-outline-secondary btn-sm">logout</a>
+					<p></p>
+					<i>{{ user.get("name") }}</i>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
