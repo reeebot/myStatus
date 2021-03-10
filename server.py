@@ -229,7 +229,7 @@ def notification_received():
         updatedStatus = graph_data['value'][0]['resourceData']['availability']
         subscriptionID = graph_data['value'][0]['subscriptionId']
         subscriptionExp = graph_data['value'][0]['subscriptionExpirationDateTime']
-        timeLeftSubscription = (datetime.fromisoformat(subscriptionExp[0:26]) - datetime.now()) + timedelta(hours=1)
+        timeLeftSubscription = (datetime.fromisoformat(subscriptionExp[0:19]) - datetime.now()) + timedelta(hours=1)
         if updatedStatus in ["Available", "AvailableIdle"]:
             Available()
         elif updatedStatus in ["Busy", "BusyIdle", "DoNotDisturb"]:
