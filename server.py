@@ -45,6 +45,10 @@ def Available():
     blinkt.show()
 
 def Busy():
+    blinkt.set_all(255, 255, 0)
+    blinkt.show()
+
+def inCall():
     blinkt.set_all(255, 0, 0)
     blinkt.show()
 
@@ -227,13 +231,17 @@ def notification_received():
         return Response(valtoken, status=200, content_type="text/plain")
     else:  # NOTIFICATION RECVD
         updatedStatus = graph_data['value'][0]['resourceData']['availability']
+        updatedActivity = graph_data['value'][0]['resourceData']['activity']
         subscriptionID = graph_data['value'][0]['subscriptionId']
         subscriptionExp = graph_data['value'][0]['subscriptionExpirationDateTime']
         timeLeftSubscription = (datetime.fromisoformat(subscriptionExp[0:19]) - datetime.now()) + timedelta(hours=1)
         if updatedStatus in ["Available", "AvailableIdle"]:
             Available()
         elif updatedStatus in ["Busy", "BusyIdle", "DoNotDisturb"]:
-            Busy()
+            if updatedActivity in ["DoNotDisturb", "InACall", "InAConferenceCall", "InAMeeting", "Presenting"]:
+                inCall()
+            else:
+                Busy()
         elif updatedStatus in ["Away", "BeRightBack"]:
             Away()
         elif updatedStatus in ["Offline", "PresenceUnknown"]:
@@ -247,6 +255,7 @@ def notification_received():
         print("Expires in: " + str(timeLeftSubscription))
         print("- - - - - - - - - - - - - - - - - -")
         print("> >  " + updatedStatus.upper() + "  < <")
+        print("> >  " + updatedActivity.upper() + "  < <")
         print("- - - - - - - - - - - - - - - - - -")
         return Response(status=202)
 
