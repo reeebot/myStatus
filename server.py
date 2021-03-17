@@ -45,7 +45,7 @@ def Available():
     blinkt.show()
 
 def Busy():
-    blinkt.set_all(255, 255, 0)
+    blinkt.set_all(255, 220, 0)
     blinkt.show()
 
 def inCall():
@@ -238,7 +238,7 @@ def notification_received():
         if updatedStatus in ["Available", "AvailableIdle"]:
             Available()
         elif updatedStatus in ["Busy", "BusyIdle", "DoNotDisturb"]:
-            if updatedActivity in ["DoNotDisturb", "InACall", "InAConferenceCall", "InAMeeting", "Presenting"]:
+            if updatedActivity in ["DoNotDisturb", "InACall", "InAConferenceCall", "Presenting"]:
                 inCall()
             else:
                 Busy()
